@@ -26,10 +26,11 @@ var (
 	procDispatchMessageW = user32.NewProc("DispatchMessageW")
 	procPostQuitMessage  = user32.NewProc("PostQuitMessage")
 	procBeginPaint       = user32.NewProc("BeginPaint")
-	procEndPaint         = user32.NewProc("EndPait")
+	procEndPaint         = user32.NewProc("EndPaint")
 	procFillRect         = user32.NewProc("FillRect")
 
 	procCreateSolidBrush = gdi32.NewProc("CreateSolidBrush")
+	procDeleteObject     = gdi32.NewProc("DeleteObject")
 
 	procGetModuleHandleW = kernel32.NewProc("GetModuleHandleW")
 )
@@ -124,14 +125,16 @@ func wndProc(
 
 		var ps PAINTSTRUCT
 
-		hbrush = procCreateSolidBrush.Call()
+		hbrush, _, _ := procCreateSolidBrush.Call(0, 0, 0)
 
 		hdc, _, _ := procBeginPaint.Call(
 			hwnd,
 			uintptr(unsafe.Pointer(&ps)),
 		)
 
-		procFillRect.Call(hdc, uintptr(unsafe.Pointer(&ps.RcPaint)), (HBRUSH)(COLOR_WINDOW+1))
+		procFillRect.Call(hdc, uintptr(unsafe.Pointer(&ps.RcPaint)), (hbrush))
+
+		procDeleteObject.Call(hbrush)
 
 		procEndPaint.Call(
 			hwnd,
