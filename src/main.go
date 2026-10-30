@@ -55,6 +55,17 @@ const (
 	WM_QUIT    = 0x0012 // 18
 )
 
+// ----------------------------------------------------------------------------
+// Constantes do framebuffer.
+// Definindo a largura, altura e bytes por pixels.
+// ----------------------------
+
+const (
+	WIDTH  = 50
+	HEIGHT = 50
+	BYTES  = 4
+)
+
 // ------------------------------------------------------------
 // Estruturas equivalentes às estruturas C da WinAPI.
 //
@@ -242,6 +253,7 @@ func main() {
 	//   = 0: mensagem WM_QUIT
 	//   = -1: erro
 	var msg MSG
+	framebuffer := make([]byte, WIDTH*HEIGHT*BYTES)
 
 	for {
 
